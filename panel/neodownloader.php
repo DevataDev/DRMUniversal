@@ -897,7 +897,7 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
         }
 
         $cmd = 'ffmpeg ' .
-        '-hide_banner' .
+        '-hide_banner ' .
         '-fflags +igndts ' .
         '-nostdin ' .
         '-nostats ' .
