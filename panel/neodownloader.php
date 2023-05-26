@@ -923,7 +923,7 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
             '"' . $WorkPath . '/' . $ChName . '/hls/index.m3u8" ' .
             '> "' . $WorkPath . '/' . $ChName . '/log/ffmpeg.log" ' .
             '2>&1 & echo $!;';
-
+        DoLog("Execute FFMPEG : $cmd");
         $FFMpegPID = exec($cmd, $res);
         UpdateFPID($ChID, $FFMpegPID);
     }
