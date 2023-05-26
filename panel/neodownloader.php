@@ -815,7 +815,8 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     // $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
-    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f mpegts pipe:1";
+    stream_set_blocking($Merged_Fifo, 0);
+    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f mpegts $namedPipe";
     DoLog("Merging Command : $cmd");
     DoLog("Merging segment .... please wait .....");
     $Res = null;
@@ -824,8 +825,8 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     // foreach ($Res as $r) {
     //     fwrite($Merged_Fifo, implode("\n", $Res));
     // }
-    stream_set_blocking($Merged_Fifo, 0);
-    fwrite($Merged_Fifo, implode("", $Res));
+    // stream_set_blocking($Merged_Fifo, 0);
+    // fwrite($Merged_Fifo, implode("", $Res));
     DoLog("Merging segment done");
 
     if ($CheckKey) {
