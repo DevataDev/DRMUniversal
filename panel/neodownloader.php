@@ -827,7 +827,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     //     fwrite($Merged_Fifo, implode("\n", $Res));
     // }
     stream_set_blocking($Merged_Fifo, 0);
-    fwrite($Merged_Fifo, implode("", $Res));
+    fwrite($Merged_Fifo, implode("\n", $Res));
     DoLog("Merging segment done");
 
     // if ($CheckKey) {
