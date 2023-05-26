@@ -830,17 +830,17 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     fwrite($Merged_Fifo, implode("\n", $Res));
     DoLog("Merging segment done");
 
-    // if ($CheckKey) {
-    //     $cmd = "ffmpeg -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
-    //     exec($cmd);
-    //     $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
-    //     if (strpos($Err, "error while decoding") === false) {
-    //         //ok
-    //     } else {
-    //         UpdateChanStatus2($ChID, "KeyError");
-    //         die();
-    //     }
-    // }
+    if ($CheckKey) {
+        $cmd = "ffmpeg -nostdin -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
+        exec($cmd);
+        $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
+        if (strpos($Err, "error while decoding") === false) {
+            //ok
+        } else {
+            UpdateChanStatus2($ChID, "KeyError");
+            die();
+        }
+    }
 
     $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_Fifo > a.json";
     exec($cmd);
