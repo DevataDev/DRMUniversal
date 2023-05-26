@@ -755,7 +755,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $Mp4Decrypt = $BinPath . '\\mp4decrypt.exe ';
         $FFMpegBin = $BinPath . '\\ffmpeg.exe ';
-        $Redirect = " > /dev/null 2>&1 &";
+        $Redirect = " > /nul 2>&1 &";
     } else {
         $Mp4Decrypt = $BinPath . '/mp4decrypt ';
         $FFMpegBin = 'ffmpeg ';
@@ -815,7 +815,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
     stream_set_blocking($Merged_Fifo, 0);
-    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_Fifo ";
+    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_Fifo $Redirect";
     echo $cmd;
     DoLog("Merging segment .... please wait .....");
     $Res = null;
