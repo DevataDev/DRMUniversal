@@ -412,9 +412,9 @@ class App
                 $ProxyUser = $this->GetConfig("ProxyUser");
                 $ProxyPass = $this->GetConfig("ProxyPass");
             }
-            $cmd = "php downloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
+            $cmd = "php neodownloader.php --mode=infoshort --chid=$ID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass";
         } else {
-            $cmd = "php downloader.php --mode=infoshort --chid=$ID";
+            $cmd = "php neodownloader.php --mode=infoshort --chid=$ID";
         }
 
         exec($cmd, $Res);
@@ -532,9 +532,9 @@ class App
                 $ProxyUser = $this->GetConfig("ProxyUser");
                 $ProxyPass = $this->GetConfig("ProxyPass");
             }
-            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
+            $cmd = "php $DownloaderPath/neodownloader.php --mode=download --chid=$ChanID --proxyurl=$ProxyURL --proxyport=$ProxyPort --proxyuser=$ProxyUser --proxypass=$ProxyPass --checkkey=1";
         } else {
-            $cmd = "sudo php $DownloaderPath/downloader.php --mode=download --chid=$ChanID --checkkey=1";
+            $cmd = "php $DownloaderPath/neodownloader.php --mode=download --chid=$ChanID --checkkey=1";
         }
         $this->execInBackground($cmd);
         sleep(1);
@@ -655,15 +655,15 @@ class App
                 $ProxyUser = $this->GetConfig("ProxyUser");
                 $ProxyPass = $this->GetConfig("ProxyPass");
             }
-            $cmd = 'php downloader.php --mode=testonly --mpdurl="' . $Url . '" --proxyurl="' . $ProxyURL . '" --proxyport="' . $ProxyPort . '" --proxyuser="' . $ProxyUser . '" --proxypass="' . $ProxyPass . '" --useragent="' . $Useragent . '"';
+            $cmd = 'php neodownloader.php --mode=testonly --mpdurl="' . $Url . '" --proxyurl="' . $ProxyURL . '" --proxyport="' . $ProxyPort . '" --proxyuser="' . $ProxyUser . '" --proxypass="' . $ProxyPass . '" --useragent="' . $Useragent . '"';
         } else {
-            $cmd = 'php downloader.php --mode=testonly --mpdurl="' . $Url . '"';
+            $cmd = 'php neodownloader.php --mode=testonly --mpdurl="' . $Url . '"';
         }
         exec($cmd, $Res);
         $data["str"] = implode("\r\n", $Res);
 
         $Res = null;
-        $cmd = 'php downloader.php --mode=infojson --mpdurl="' . $Url . '"';
+        $cmd = 'php neodownloader.php --mode=infojson --mpdurl="' . $Url . '"';
         exec($cmd, $Res);
         $x = json_decode($Res[0], true);
         $data["a"] = $x["a"];
