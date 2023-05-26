@@ -893,18 +893,24 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
         $audioStr = "";
 
         for($i=0;$i<$audioCount;$i++){
-            $audioStr .= '-i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_a_' . $i . '" ';
+            $audioStr .= '-thread_queue_size 4096 -i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_a_' . $i . '" ';
         }
 
         $cmd = 'ffmpeg ' .
+        '-hide_banner' .
+        '-fflags +igndts ' .
+        '-nostdin ' .
+        '-nostats ' .
+        '-loglevel warning ' .
         '-start_at_zero ' .
         '-correct_ts_overflow 0 ' .
         '-avoid_negative_ts disabled ' .
         '-max_interleave_delta 0 ' .
         //'-copyts '.
-        '-re ' .
+        // '-re ' .
             '-probesize 9000000 ' .
             '-analyzeduration 9000000 ' .
+            '-thread_queue_size 4096 ' .
             '-i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_v" ' .
             $audioStr .
             '-vcodec copy ' .
