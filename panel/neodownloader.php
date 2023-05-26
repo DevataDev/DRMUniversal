@@ -824,7 +824,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     #foreach ($Res as $r) {
     #    fwrite($Merged_Fifo, $r);
     #}
-    DoLog("Output : " . implode("\n", $Res));
+    fwrite($Merged_Fifo, implode("\n", $Res));
     DoLog("Merging segment done");
 
     if ($CheckKey) {
