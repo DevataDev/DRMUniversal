@@ -768,6 +768,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     $OutExt2 = ".ts";
 
     $Merged_FileName = $WorkPath . "/" . $ChName . "/stream/$Index" . $OutExt2;
+    $Merged_Fifo = CreateFifo($ChName, "pipe");
 
     $map = "";
     /** let mp4decrypt bruteforce the key */
@@ -788,9 +789,9 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
         $dec = $Mp4Decrypt . $keyString . $AudioEncFileName[$k] . " " . $AudioDecFileName[$k] . " --show-progress " . $Redirect;
         exec($dec);
         $map .= " -map " . ($k + 1) . ":a ";
-        stream_set_blocking($aFifos[$k], 0);
-        DoLog("Writing audio $k to fifo");
-        fwrite($aFifos[$k], file_get_contents($AudioDecFileName[$k]));
+        // stream_set_blocking($aFifos[$k], 0);
+        // DoLog("Writing audio $k to fifo");
+        // fwrite($aFifos[$k], file_get_contents($AudioDecFileName[$k]));
     }
 
     $VideoEncFileName = $WorkPath . "/" . $ChName . "/seg/" . $Index . "-enc" . $video_ext;
@@ -799,9 +800,9 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     file_put_contents($VideoEncFileName, $vSeg);
     $dec = $Mp4Decrypt . $keyString . $VideoEncFileName . " " . $VideoDecFileName . " --show-progress " . $Redirect;
     exec($dec);
-    stream_set_blocking($vFifo, 0);
-    DoLog("Writing video to fifo");
-    fwrite($vFifo, file_get_contents($VideoDecFileName));
+    // stream_set_blocking(, 0);
+    // DoLog("Writing video to fifo");
+    // fwrite($vFifo, file_get_contents($VideoDecFileName));
 
     // $MyFFMpegCMD = str_replace("-i", "", $MyFFMpegCMD);
     // $MyFFMpegCMD = str_replace("[VIDEO]", " -i " . $VideoDecFileName, $MyFFMpegCMD);
@@ -813,13 +814,13 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     // $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
-    // $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName ";
-    // echo $cmd;
-    // $Res = null;
-    // exec($cmd, $Res);
+    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_Fifo ";
+    echo $cmd;
+    $Res = null;
+    exec($cmd, $Res);
 
     if ($CheckKey) {
-        $cmd = "ffmpeg -v error -i $Merged_FileName -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
+        $cmd = "ffmpeg -v error -i $Merged_Fifo -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
         exec($cmd);
         $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
         if (strpos($Err, "error while decoding") === false) {
@@ -830,25 +831,25 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
         }
     }
 
-    // $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_FileName > a.json";
-    // exec($cmd);
-    // $v = json_decode(file_get_contents("a.json"), true);
-    // unlink("a.json");
+    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_Fifo > a.json";
+    exec($cmd);
+    $v = json_decode(file_get_contents("a.json"), true);
+    unlink("a.json");
 
-    // $info["vcodec"] = $v["streams"][0]["codec_name"];
-    // $info["width"] = $v["streams"][0]["width"];
-    // $info["height"] = $v["streams"][0]["height"];
-    // $info["ratio"] = $v["streams"][0]["display_aspect_ratio"];
-    // $info["framerate"] = $v["streams"][0]["avg_frame_rate"];
-    // $info["acodec"] = $v["streams"][1]["codec_name"];
-    // $info["channels"] = $v["streams"][1]["channel_layout"];
-    // $info["samplerate"] = $v["streams"][1]["sample_rate"];
-    // $info["bitrate"] = $v["format"]["bit_rate"];
-    // $data = json_encode($info);
-    // if ($info["vcodec"]) {
-    //     $sql = "update channels set info='$data' where ID=$ChID";
-    //     $db->exec($sql);
-    // }
+    $info["vcodec"] = $v["streams"][0]["codec_name"];
+    $info["width"] = $v["streams"][0]["width"];
+    $info["height"] = $v["streams"][0]["height"];
+    $info["ratio"] = $v["streams"][0]["display_aspect_ratio"];
+    $info["framerate"] = $v["streams"][0]["avg_frame_rate"];
+    $info["acodec"] = $v["streams"][1]["codec_name"];
+    $info["channels"] = $v["streams"][1]["channel_layout"];
+    $info["samplerate"] = $v["streams"][1]["sample_rate"];
+    $info["bitrate"] = $v["format"]["bit_rate"];
+    $data = json_encode($info);
+    if ($info["vcodec"]) {
+        $sql = "update channels set info='$data' where ID=$ChID";
+        $db->exec($sql);
+    }
 
     if ($DeleteEncryptedAfterDecrypt) {
         array_map('unlink', array_filter((array) $AudioEncFileName));
@@ -911,8 +912,8 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
             '-probesize 9000000 ' .
             '-analyzeduration 9000000 ' .
             '-thread_queue_size 4096 ' .
-            '-i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_v" ' .
-            $audioStr .
+            '-i "' . $WorkPath . '/' . $ChName . '/fifo/pipe" ' .
+            // $audioStr .
             '-vcodec copy ' .
             '-scodec copy ' .
             '-acodec copy ' .
