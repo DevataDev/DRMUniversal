@@ -831,6 +831,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     DoLog("Merging segment done");
 
     StartFFMPEG($ChName, $ChID, $audioCount);
+    DoLog("FFMPEG Started");
 
     if ($CheckKey) {
         $cmd = "ffmpeg -nostdin -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
@@ -842,9 +843,10 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
             UpdateChanStatus2($ChID, "KeyError");
             die();
         }
+        DoLog("Checking key finished .....");
     }
 
-    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $namedPipe > a.json";
+    $cmd = "ffprobe  -v quiet -print_format json -show_streams -show_format $namedPipe > a.json 2>&1";
     exec($cmd);
     $v = json_decode(file_get_contents("a.json"), true);
     DoLog("Video Info - $cmd - : " . json_encode($v));
