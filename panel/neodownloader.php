@@ -818,7 +818,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     stream_set_blocking($Merged_Fifo, 0);
     StartFFMPEG($ChName, $ChID, $audioCount);
 
-    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f mp4 pipe:1";
+    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f ismv pipe:1";
     DoLog("Merging Command : $cmd");
     DoLog("Merging segment .... please wait .....");
     $Res = null;
