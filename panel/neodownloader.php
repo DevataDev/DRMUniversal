@@ -817,7 +817,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
     // stream_set_blocking($Merged_Fifo, 0);
     StartFFMPEG($ChName, $ChID, $audioCount);
-    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f mpegts $namedPipe";
+    $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy -f mpegts pipe:1";
     DoLog("Merging Command : $cmd");
     DoLog("Merging segment .... please wait .....");
     $Res = null;
@@ -826,12 +826,12 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     // foreach ($Res as $r) {
     //     fwrite($Merged_Fifo, implode("\n", $Res));
     // }
-    // stream_set_blocking($Merged_Fifo, 0);
-    // fwrite($Merged_Fifo, implode("", $Res));
+    stream_set_blocking($Merged_Fifo, 0);
+    fwrite($Merged_Fifo, implode("", $Res));
     DoLog("Merging segment done");
 
     if ($CheckKey) {
-        $cmd = "ffmpeg -v error -i $Merged_Fifo -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
+        $cmd = "ffmpeg -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
         exec($cmd);
         $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
         if (strpos($Err, "error while decoding") === false) {
@@ -842,7 +842,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
         }
     }
 
-    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_Fifo > a.json";
+    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $namedPipe > a.json";
     exec($cmd);
     $v = json_decode(file_get_contents("a.json"), true);
     unlink("a.json");
