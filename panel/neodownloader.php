@@ -893,7 +893,7 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
         $audioStr = "";
 
         for($i=0;$i<$audioCount;$i++){
-            $audioStr .= '-i ' . $WorkPath . '/' . $ChName . '/fifo/fifo_a_' . $i . ' ';
+            $audioStr .= '-i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_a_' . $i . '" ';
         }
 
         $cmd = 'ffmpeg ' .
@@ -907,7 +907,6 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
             '-analyzeduration 9000000 ' .
             '-i "' . $WorkPath . '/' . $ChName . '/fifo/fifo_v" ' .
             $audioStr .
-            '-map 0 ' .
             '-vcodec copy ' .
             '-scodec copy ' .
             '-acodec copy ' .
