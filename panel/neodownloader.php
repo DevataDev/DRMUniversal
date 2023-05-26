@@ -914,7 +914,7 @@ function StartFFMPEG($ChName, $ChID, $audioCount = 1)
         '-fflags +igndts ' .
         '-nostdin ' .
         '-nostats ' .
-        '-loglevel warning ' .
+        '-loglevel info ' .
         '-start_at_zero ' .
         '-correct_ts_overflow 0 ' .
         '-avoid_negative_ts disabled ' .
