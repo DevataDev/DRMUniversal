@@ -788,6 +788,8 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
         $dec = $Mp4Decrypt . $keyString . $AudioEncFileName[$k] . " " . $AudioDecFileName[$k] . " --show-progress " . $Redirect;
         exec($dec);
         $map .= " -map " . ($k + 1) . ":a ";
+        stream_set_blocking($aFifos[$k], 0);
+        DoLog("Writing audio $k to fifo");
         fwrite($aFifos[$k], file_get_contents($AudioDecFileName[$k]));
     }
 
@@ -797,6 +799,8 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     file_put_contents($VideoEncFileName, $vSeg);
     $dec = $Mp4Decrypt . $keyString . $VideoEncFileName . " " . $VideoDecFileName . " --show-progress " . $Redirect;
     exec($dec);
+    stream_set_blocking($vFifo, 0);
+    DoLog("Writing video to fifo");
     fwrite($vFifo, file_get_contents($VideoDecFileName));
 
     // $MyFFMpegCMD = str_replace("-i", "", $MyFFMpegCMD);
