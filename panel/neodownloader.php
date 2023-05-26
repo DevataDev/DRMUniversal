@@ -806,9 +806,9 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
 
     // $MyFFMpegCMD = str_replace("-i", "", $MyFFMpegCMD);
     // $MyFFMpegCMD = str_replace("[VIDEO]", " -i " . $VideoDecFileName, $MyFFMpegCMD);
-    // for ($k = 0; $k < count($aData); $k++) {
-    //     $strAudioIn .= " -copyts -i " . $AudioDecFileName[$k] . " ";
-    // }
+    for ($k = 0; $k < count($aData); $k++) {
+        $strAudioIn .= " -copyts -i " . $AudioDecFileName[$k] . " ";
+    }
     // $MyFFMpegCMD = str_replace("[AUDIO]", $strAudioIn, $MyFFMpegCMD);
     // $MyFFMpegCMD = str_replace("[OUTPUT]", $Merged_FileName, $MyFFMpegCMD);
     // $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
