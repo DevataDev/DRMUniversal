@@ -821,7 +821,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     $Res = null;
     exec($cmd, $Res);
     foreach ($Res as $r) {
-        fwrite($Merged_Fifo, $r);
+        fwrite($Merged_Fifo, implode("\n", $Res));
     }
     // fwrite($Merged_Fifo, implode("\n", $Res));
     DoLog("Merging segment done");
