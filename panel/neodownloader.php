@@ -1421,11 +1421,11 @@ try {
                 for ($k = 0; $k < count($a_url); $k++) {
                     array_shift($a_url[$k]);
                     array_shift($a_url[$k]);
-                    $aFifos[] = fopen(CreateFifo($ChName, "fifo_a_" . $k), "r+");
+                    $aFifos[] = fopen(CreateFifo($ChName, "fifo_a_" . $k), "w+");
                 }
                 array_shift($v_url);
                 array_shift($v_url);
-                $vFifo = fopen(CreateFifo($ChName, "fifo_v"), "r+");
+                $vFifo = fopen(CreateFifo($ChName, "fifo_v"), "w+");
 
                 $Start = 0;
                 $End = count($v_url);
