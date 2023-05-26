@@ -845,6 +845,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_Fifo > a.json";
     exec($cmd);
     $v = json_decode(file_get_contents("a.json"), true);
+    DoLog("Video Info : " . json_encode($v));
     unlink("a.json");
 
     $info["vcodec"] = $v["streams"][0]["codec_name"];
