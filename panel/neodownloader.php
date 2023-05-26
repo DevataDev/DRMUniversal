@@ -814,8 +814,10 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     // $cmd = $FFMpegBin . " -copyts " . $MyFFMpegCMD . $Redirect;
 
     //$cmd=$FFMpegBin." -hide_banner -start_at_zero -correct_ts_overflow 0 -avoid_negative_ts disabled -max_interleave_delta 0 -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_FileName";
+    stream_set_blocking($Merged_Fifo, 0);
     $cmd = $FFMpegBin . " -hide_banner -fflags +igndts -copyts -i $VideoDecFileName $strAudioIn -map 0:v $map -c:v copy -c:a copy $Merged_Fifo ";
     echo $cmd;
+    DoLog("Merging segment .... please wait .....");
     $Res = null;
     exec($cmd, $Res);
 
@@ -871,7 +873,7 @@ function CreateFifo($ChName, $FileName)
         mkdir($Folder, 0777, true);
     }
     if (!file_exists($Folder . "/" . $FileName)) {
-        posix_mkfifo($Folder . "/" . $FileName, 0600);
+        posix_mkfifo($Folder . "/" . $FileName, 0660);
     }
     return $Folder . "/" . $FileName;
 }
