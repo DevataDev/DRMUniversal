@@ -1545,8 +1545,8 @@ try {
                     }
 
                     DoLog("Finalizing segment");
-                    // JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex);
-                    WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex, $aFifos, $vFifo);
+                    JoinSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex);
+                    // WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData, $DownloadIndex, $aFifos, $vFifo);
                     $aData = "";
                     $vData = "";
                     $SegmentCounter = 0;
