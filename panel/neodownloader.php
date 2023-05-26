@@ -821,10 +821,10 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     DoLog("Merging segment .... please wait .....");
     $Res = null;
     exec($cmd, $Res);
-    #foreach ($Res as $r) {
-    #    fwrite($Merged_Fifo, $r);
-    #}
-    fwrite($Merged_Fifo, implode("\n", $Res));
+    foreach ($Res as $r) {
+        fwrite($Merged_Fifo, $r);
+    }
+    // fwrite($Merged_Fifo, implode("\n", $Res));
     DoLog("Merging segment done");
 
     if ($CheckKey) {
