@@ -833,39 +833,39 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     StartFFMPEG($ChName, $ChID, $audioCount);
     DoLog("FFMPEG Started");
 
-    if ($CheckKey) {
-        $cmd = "ffmpeg -nostdin -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
-        exec($cmd);
-        $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
-        if (strpos($Err, "error while decoding") === false) {
-            //ok
-        } else {
-            UpdateChanStatus2($ChID, "KeyError");
-            die();
-        }
-        DoLog("Checking key finished .....");
-    }
+    // if ($CheckKey) {
+    //     $cmd = "ffmpeg -nostdin -v error -i $namedPipe -f null - > $WorkPath/$ChName/log/checkkey.txt 2>&1";
+    //     exec($cmd);
+    //     $Err = file_get_contents("$WorkPath/$ChName/log/checkkey.txt");
+    //     if (strpos($Err, "error while decoding") === false) {
+    //         //ok
+    //     } else {
+    //         UpdateChanStatus2($ChID, "KeyError");
+    //         die();
+    //     }
+    //     DoLog("Checking key finished .....");
+    // }
 
-    $cmd = "ffprobe  -v quiet -print_format json -show_streams -show_format $namedPipe > a.json 2>&1";
-    exec($cmd);
-    $v = json_decode(file_get_contents("a.json"), true);
-    DoLog("Video Info - $cmd - : " . json_encode($v));
-    unlink("a.json");
+    // $cmd = "ffprobe  -v quiet -print_format json -show_streams -show_format $namedPipe > a.json 2>&1";
+    // exec($cmd);
+    // $v = json_decode(file_get_contents("a.json"), true);
+    // DoLog("Video Info - $cmd - : " . json_encode($v));
+    // unlink("a.json");
 
-    $info["vcodec"] = $v["streams"][0]["codec_name"];
-    $info["width"] = $v["streams"][0]["width"];
-    $info["height"] = $v["streams"][0]["height"];
-    $info["ratio"] = $v["streams"][0]["display_aspect_ratio"];
-    $info["framerate"] = $v["streams"][0]["avg_frame_rate"];
-    $info["acodec"] = $v["streams"][1]["codec_name"];
-    $info["channels"] = $v["streams"][1]["channel_layout"];
-    $info["samplerate"] = $v["streams"][1]["sample_rate"];
-    $info["bitrate"] = $v["format"]["bit_rate"];
-    $data = json_encode($info);
-    if ($info["vcodec"]) {
-        $sql = "update channels set info='$data' where ID=$ChID";
-        $db->exec($sql);
-    }
+    // $info["vcodec"] = $v["streams"][0]["codec_name"];
+    // $info["width"] = $v["streams"][0]["width"];
+    // $info["height"] = $v["streams"][0]["height"];
+    // $info["ratio"] = $v["streams"][0]["display_aspect_ratio"];
+    // $info["framerate"] = $v["streams"][0]["avg_frame_rate"];
+    // $info["acodec"] = $v["streams"][1]["codec_name"];
+    // $info["channels"] = $v["streams"][1]["channel_layout"];
+    // $info["samplerate"] = $v["streams"][1]["sample_rate"];
+    // $info["bitrate"] = $v["format"]["bit_rate"];
+    // $data = json_encode($info);
+    // if ($info["vcodec"]) {
+    //     $sql = "update channels set info='$data' where ID=$ChID";
+    //     $db->exec($sql);
+    // }
 
     if ($DeleteEncryptedAfterDecrypt) {
         array_map('unlink', array_filter((array) $AudioEncFileName));
