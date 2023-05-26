@@ -823,7 +823,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     DoLog("Merging segment .... please wait .....");
     $Res = null;
     exec($cmd, $Res);
-    DoLog("Output : " . implode("", $Res));
+    // DoLog("Output : " . implode("", $Res));
     // foreach ($Res as $r) {
     //     fwrite($Merged_Fifo, implode("\n", $Res));
     // }
