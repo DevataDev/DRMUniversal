@@ -842,7 +842,7 @@ function WriteSegment($ChID, $ChName, $Keys, $aHeader, $aData, $vHeader, $vData,
     //     }
     // }
 
-    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $namedPipe > a.json";
+    $cmd = "ffprobe -v quiet -print_format json -show_streams -show_format $Merged_Fifo > a.json";
     exec($cmd);
     $v = json_decode(file_get_contents("a.json"), true);
     unlink("a.json");
