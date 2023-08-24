@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#-- UBUNTU 18.04 ONLY --
+#-- UBUNTU 22.04 ONLY --
 
 echo "############################################################################################"
 echo "#               DRMPHP 0.1 BY DRMSCRIPTS COMMUNITY - HTTPS://DRMSCRIPTS.COM                #"
@@ -18,15 +18,21 @@ add-apt-repository ppa:ondrej/apache2 -y;
 add-apt-repository ppa:xapienz/curl34 -y;
 
 # Remove any pending packages
-apt-get autoremove -y;
+apt autoremove;
 
 # Run an update
-apt-get update -y;
+apt update -y;
 apt full-upgrade -y;
 
 # Install MySQL, Apache2 & Aria2
 apt install mysql-server apache2 aria2 -y;
-apt-get install php7.2 php7.2-cli php7.2-json php7.2-common php7.2-mysql php7.2-zip php7.2-gd php7.2-mbstring php7.2-curl php7.2-xml php7.2-bcmath php7.2-bz2 php7.2-xmlrpc -y;
+
+# Install PHP and required extensions
+php_packages=("php8.0" "php8.0-cli" "php8.0-json" "php8.0-common" "php8.0-mysql" "php8.0-zip" "php8.0-gd" "php8.0-mbstring" "php8.0-curl" "php8.0-xml" "php8.0-bcmath" "php8.0-bz2" "php8.0-xmlrpc")
+
+for package in "${php_packages[@]}"; do
+    apt install "$package" -y;
+done
 
 # Download Panel
 cd /home;
@@ -37,32 +43,32 @@ echo "####################################################";
 echo "# INSTALL STEP 2: MYSQL, SHORTTAGS, FFMPEG & PANEL #";
 echo "####################################################";
 
-#setup sql cnf
+# Setup sql cnf
 content="[mysqld]\nsql-mode=\"NO_ENGINE_SUBSTITUTION\"\n";
-echo -e "$content" | tee /etc/mysql/my.cnf > /dev/null;
-service mysql restart;
+echo -e "$content" | tee /etc/mysql/mysql.conf.d/mysqld.cnf > /dev/null;
+systemctl restart mysql;
 echo "MySQL configured successfully!";
 
-#setup php.ini
-sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/7.2/cli/php.ini;
-sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/apache2/php.ini;
+# Setup php.ini
+sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/8.0/cli/php.ini;
+sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.0/apache2/php.ini;
 echo "php.ini configured successfully!";
 
-#setup sudoers
+# Setup sudoers
 line="www-data ALL=(ALL) NOPASSWD: ALL";
 sed -i "$ a $line" /etc/sudoers;
 echo "Sudoers configured successfully!";
 
-service apache2 restart;
+systemctl restart apache2;
 cd /home;
 
-#download and setup ffmpeg
+# Download and setup ffmpeg
 wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz;
 tar -xf ffmpeg-release-amd64-static.tar.xz;
 cp -r ffmpeg-6.0-amd64-static/* /usr/bin;
 echo "FFMpeg configured successfully!";
 
-cd DRM*;
+cd DRMPHP*;
 cp -r panel/. /var/www/html;
 cd /var/www/html;
 chmod +x mp4decrypt;
@@ -73,7 +79,7 @@ mkdir backup;
 chmod 777 backup;
 chmod 777 html;
 cd /home;
-cd DRM*;
+cd DRMPHP*;
 cp panel/downloader.php /var/www/html;
 echo "Panel configured successfully!";
 
@@ -91,7 +97,7 @@ echo "####################################################";
 echo "# INSTALL STEP 4: CLEANUP                          #";
 echo "####################################################";
 
-#delete default apache page
+# Delete default Apache page
 rm /var/www/html/index.html;
 echo 
 echo
@@ -100,7 +106,7 @@ echo "#              INSTALLATION COMPLETE               #";
 echo "####################################################";
 echo 
 echo
-#--ACCESS
+#-- ACCESS
 public_ip=$(wget -q "http://api.ipify.org" -O -);
 echo "####################################################";
 echo "#                  PANEL DETAILS                   #";

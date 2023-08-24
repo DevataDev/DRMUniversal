@@ -1,24 +1,42 @@
 #!/bin/bash
 
-#-- UBUNTU 18.04 ONLY --
+#-- UBUNTU 20.04 ONLY --
 
 echo "############################################################################################"
 echo "#               DRMPHP 0.1 BY DRMSCRIPTS COMMUNITY - HTTPS://DRMSCRIPTS.COM                #"
 echo "# THIS INSTALL IS BASED ON INSTALLING ALL FILES IN PANEL FOLDER TO THE ROOT OF HTML FOLDER #"
 echo "############################################################################################"
+echo "############################################################################################"
+echo "# For Hetzner please change your source.list in /etc/apt/source.list to the following:     #"
+echo "# deb http://mirror.hetzner.de/ubuntu/packages focal main restricted                       #"
+echo "# deb http://mirror.hetzner.de/ubuntu/packages focal-updates main restricted               #"
+echo "############################################################################################"
+
+read -p "Are you sure already change your source.list? (y/n)" answer
+
+# Check the user's response
+if [[ "$answer" =~ ^[yY]$ ]] || [[ "$answer" =~ ^[yY][eE][sS]$ ]]; then
+  echo "Confirmed. Proceeding..."
+  # Your code here
+else
+  echo "Confirmation declined. Aborting."
+  exit
+  # Handle the rejection or exit the script
+fi
 
 echo "####################################################"
 echo "# INSTALL STEP 1: REPOS, PACKAGES & PANEL DOWNLOAD #"
 echo "####################################################"
 
 # Add Repos
+apt update -y
+apt install git -y;
 apt install software-properties-common -y;
 add-apt-repository ppa:ondrej/php -y;
 add-apt-repository ppa:ondrej/apache2 -y;
-add-apt-repository ppa:xapienz/curl34 -y;
 
 # Remove any pending packages
-apt-get autoremove -y;
+apt-get autoremove;
 
 # Run an update
 apt-get update -y;
@@ -26,11 +44,11 @@ apt full-upgrade -y;
 
 # Install MySQL, Apache2 & Aria2
 apt install mysql-server apache2 aria2 -y;
-apt-get install php7.2 php7.2-cli php7.2-json php7.2-common php7.2-mysql php7.2-zip php7.2-gd php7.2-mbstring php7.2-curl php7.2-xml php7.2-bcmath php7.2-bz2 php7.2-xmlrpc -y;
+a2dismod mpm_event;
+apt-get install php7.4 php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-bz2 php7.4-xmlrpc -y;
 
 # Download Panel
 cd /home;
-apt install git -y;
 git clone https://github.com/DRM-Scripts/DRMPHP;
 
 echo "####################################################";
@@ -44,8 +62,8 @@ service mysql restart;
 echo "MySQL configured successfully!";
 
 #setup php.ini
-sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/7.2/cli/php.ini;
-sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/apache2/php.ini;
+sed -i -r 's/short_open_tag = Off$/short_open_tag = On/' /etc/php/7.4/cli/php.ini;
+sed -i -r 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini;
 echo "php.ini configured successfully!";
 
 #setup sudoers

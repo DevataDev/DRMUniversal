@@ -107,7 +107,7 @@ INSERT INTO `channel_keys` (`ID`, `ChannelID`, `KID`, `Key`) VALUES
 CREATE TABLE `channel_headers` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `ChannelID` int(11) NOT NULL,
-  `Value` varchar(255) NOT NULL,
+  `Value` TEXT NOT NULL,
   PRIMARY KEY (ID)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
@@ -160,6 +160,17 @@ CREATE TABLE `notification` (
   `Sent` datetime NOT NULL,
   `Status` varchar(8) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+--
+-- Table structure for table `lines`
+--
+
+CREATE TABLE `lines` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `expire_date` DATE NOT NULL
+);
 
 -- --------------------------------------------------------
 

@@ -32,8 +32,6 @@ if(!$App->LoggedIn())header('location: login.php');
                 <a href="add.php" style="float:right" class="mb-3 btn btn-light waves-effect btn-label waves-light"><i class="bx bx-list-plus label-icon"></i> Add New</a>
                 <a href="javascript: void(0)" onclick="All('Start')" class="mb-3 btn btn-success waves-effect btn-label waves-light"><i class="bx bx-play label-icon"></i> Start All</a>
                 <a href="javascript: void(0)" onclick="All('Stop')" class="mb-3 btn btn-warning waves-effect btn-label waves-light"><i class="bx bx-stop label-icon"></i> Stop All</a>
-                <a href="javascript: void(0)" onclick="ExportAll('api')" class="mb-3 btn btn-info waves-effect btn-label waves-light"><i class="bx bxs-download label-icon"></i> Download .m3u (api)</a>
-                <a href="javascript: void(0)" onclick="ExportAll('hls')" class="mb-3 btn btn-info waves-effect btn-label waves-light"><i class="bx bxs-download label-icon"></i> Download .m3u (hls)</a>
                 <img src="assets/images/loader.gif" id="Loader" style="display:none;vertical-align: middle;width:48px;height:48px;margin-top: -12px;">
               </div>
             </div>
@@ -113,17 +111,17 @@ echo $Chan["ID"];
 ?><br>
                                   <?php if($Chan["Status"]=="Downloading" && (!file_exists("/proc/".$Chan["PID"]) ||!file_exists("/proc/".$Chan["FPID"]))){?>
                                     <span class="badge badge-pill badge-soft-danger">Error</span>
-                                  <?php }else {?>
-                                    <?php if($Chan["Status"]=="KeyError"){?>
+                                  <?php } else {?>
+                                    <?php if($Chan["Status"]=="KeyError") {?>
                                       <span class="badge badge-pill badge-soft-danger">Key Error</span>
-                                    <?php }else {?>
-                                    <?php if($Chan["Status"]=="Stopped"){ ?>
+                                    <?php } else {?>
+                                    <?php if($Chan["Status"]=="Stopped") { ?>
                                       <span class="badge badge-pill badge-soft-dark">Offline</span>
-                                    <?php }elseif($Chan["Status"]=="Downloading"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Downloading") { ?>
                                       <span class="badge badge-pill badge-soft-success">Online</span>
-                                    <?php }elseif($Chan["Status"]=="Not Supported"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Not Supported") { ?>
                                       <span class="badge badge-pill badge-soft-danger">Not supported</span>
-                                    <?php }elseif($Chan["Status"]=="Offline"){ ?>
+                                    <?php } elseif($Chan["Status"]=="Offline") { ?>
                                       <span class="badge badge-pill badge-soft-warning">O</span>
                                   <?php }
                                     }
@@ -137,10 +135,11 @@ echo $Chan["ID"];
 echo $Url;
 ?>'><span class="bx bxs-playlist"></span></a>
                                   <a href="add.php?id=<?php
-echo $Chan["ID"]?>" class="text-body fw-bold"><?=$Chan["ChannelName"]?></a> <small style="float:right"><span class="badge badge-soft-pink">Category</span> <?=$Chan["CatName"];
-?></small><br>
+echo $Chan["ID"]?>" class="text-body fw-bold"><?=$Chan["ChannelName"]?></a> <br>
                                   <small style="margin-left: 32px;"><span class="badge badge-soft-info">Audio</span> <?php
 echo $Chan["AudioID"]?> <span class="badge badge-soft-info">Video</span> <?=$Chan["VideoID"];
+?></small><br/>
+<small style="margin-left: 32px;"><span class="badge badge-soft-pink">Category</span> <?=$Chan["CatName"];
 ?></small>
                                 </td>
                                 <td><span id="uptime_<?php
@@ -166,12 +165,17 @@ echo $Chan["ID"]?>"><?=$Chan["FPID"];
 ?></span></td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
+                                  <a class="btn btn-success btn-sm" title="Play" href="javascript: void(0)" onclick="Player('<?php
+echo $Chan["ID"];
+?>')"><i class="bx bx-play"></i></a>
                                     <a class="btn btn-outline-dark" title="hhh" href="add.php?id=<?php
 echo $Chan["ID"];
 ?>"><i class="bx bxs-edit-alt"></i></a>
+                                    
                                     <a class="btn btn-outline-info" href="javascript: void(0)" onclick="ShowConfig('<?php
 echo $Chan["ID"];
 ?>')"><i class="bx bxs-cog"></i></a>
+                                   
                                     <?php if($Chan["Status"]=="Stopped"){ ?>
                                       <a href="javascript: void(0)" class="btn btn-outline-success" onclick="Download('<?php
 echo $Chan["ID"]?>', '<?=$Chan["Manifest"]?>', '<?=$Chan["AudioID"]?>', '<?=$Chan["VideoID"];
@@ -197,7 +201,7 @@ echo $Chan["ID"];
 ?>" style="display:none;padding-left:100px"></td>
                               </tr>
                             <?}
-                          }else{
+                          } else {
                             ?>
                             <tr>
                               <td colspan="7" class="text-center">
@@ -205,7 +209,8 @@ echo $Chan["ID"];
                               </td>
                             </tr>
                           <?php
-                          }?>
+                          }
+                          ?>
                         </tbody>
                       </table>
                     </div>
@@ -214,12 +219,15 @@ echo $Chan["ID"];
               </div>
             </div>
           </div>
-        </div>
-
-        <?php include "_footer.php"?>
-      </div>
-    </div>
-    <?php include "_rightbar.php"?>
+        </div> <!-- container-fluid -->
+        <?php 
+        include "_footer.php";
+        ?>
+      </div><!-- content -->
+    </div><!-- container -->
+    <?php 
+    include "_rightbar.php";
+    ?>
 
     <div class="rightbar-overlay"></div>
 
@@ -228,6 +236,7 @@ echo $Chan["ID"];
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/magnific-popup/magnific-popup.min.js"></script>
     <script src="assets/js/app.js"></script>
     <script>
       function ShowConfig(chanid){
@@ -265,6 +274,14 @@ echo $Chan["ID"];
         }
       }
 
+      function Player(id) {
+        $.magnificPopup.open({
+          items: {
+            src: "./_player.php?id=" + id,
+            type: 'iframe'
+          }
+			  });
+      }
 
       function All(action){
         $('#Loader').show();

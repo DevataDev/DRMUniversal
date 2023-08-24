@@ -843,7 +843,7 @@ function Download($url, $UseProxy = 0, $Proxy = [], $Useragent = "", $customHead
     $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
     $head[] = "Accept-Language: en-us,en;q=0.5";
 
-    if (count($customHeaders) > 0) {
+    if ($customHeaders != null && count($customHeaders) > 0) {
         foreach ($customHeaders as $customHeader) {
             $head[] = $customHeader["Value"];
         }
@@ -1002,8 +1002,7 @@ if ($ChID) {
     $Keys = $ChData["Keys"];
     $CustomHeaders = $ChData["CustomHeaders"];
     $ChName = str_replace(" ", "_", $ChData["ChannelName"]);
-
-    $Useragent = $ChData["DownloadUseragent"] ? $ChData["DownloadUseragent"] : $Useragent;
+    $Useragent = $ChData["DownloadUseragent"] && $ChData["DownloadUseragent"] != "" ? $ChData["DownloadUseragent"] : $Useragent;
     $SegmentJoiner = intval($ChData["SegmentJoiner"]) > 0 ? $ChData["SegmentJoiner"] : $SegmentJoiner;
     $URLListLimit = intval($ChData["URLListLimit"]) >= 1 ? $ChData["URLListLimit"] : $PlaylistLimit;
     $PlaylistLimit = intval($ChData["PlaylistLimit"]) >= 3 ? $ChData["PlaylistLimit"] : $PlaylistLimit;
